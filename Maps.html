@@ -41,9 +41,25 @@ google.maps.event.addDomListener(window, 'load', initialize);
     </script>
   </head>
 <body>
+{{>myMap}}
+{{>render}}
+</body>
+
+
+<template name="myMap">
  <div id="map-canvas" style="width: 320px; height: 480px;"></div>
   <div>
     <input id="address" type="textbox" value="Sydney, NSW">
-    <input type="button" value="Encode" onclick="codeAddress()">
+    <input type="button" value="Encode" id="encodeSubmit">
   </div>
-</body>
+</template>
+
+
+<template name="render">
+  <ul>{{#each foo}}
+    <li>{{holes}}</li>
+    <li>{{_id}}</li>
+    </li>{{/each}}
+  </ul>
+<button class="btn btn-small" type="button" id="augment"><i class="icon-thumbs-up"></i>Upvote</button>
+  </template>
