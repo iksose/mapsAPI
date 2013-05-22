@@ -18,6 +18,10 @@ if (Meteor.isClient) {
   });
 
   var myMarkers = []
+  var mapIcon={
+    url: "/tick-mark-blue.png",
+    scaledSize: {width: 30, height:30, widthUnit: "px", heightUnit: "px"}
+  }
 
   Template.myMap.rendered = function(){
     $(document).ready(function(){
@@ -50,10 +54,12 @@ if (Meteor.isClient) {
          google.maps.event.addListener(marker, 'click', function(){
           Session.set("mapID", elem._id)
 
-          gleek = function(){
-            console.log("I'm gay")
-          }()
+       var self = this 
+            resize = function(){
+              self.setIcon(mapIcon)
+          }
           
+          console.log("Listener")
 
 
           })
@@ -126,13 +132,12 @@ if (Meteor.isClient) {
       console.log("Clicked'")
       Locations.update(Session.get("mapID"), {$inc: {holes: 1}})
       //call a function which increases icon size
-      console.log(myMarkers.length)
+      
 
       currentMarker = myMarkers[1]
 
-      console.log(currentMarker)
-
-     google.maps.event.trigger(currentMarker, 'click');
+      
+     google.maps.event.trigger(currentMarker, 'click', resize());
     }
   });
 
