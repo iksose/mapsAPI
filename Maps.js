@@ -3,6 +3,21 @@ Locations = new Meteor.Collection("locations")
 
 if (Meteor.isClient) {
 
+var jsMap
+
+Template.actualMap.rendered = function(){
+
+
+var myOptions = {
+    zoom: 7,
+    center: new google.maps.LatLng(46.87916, -3.32910),
+    mapTypeId: 'roadmap'
+};
+jsMap = new google.maps.Map($('#map')[0], myOptions);
+console.log(typeof jsMap)
+return jsMap
+}
+
 
 
   Template.myMap.greeting = function () {
@@ -39,8 +54,8 @@ if (Meteor.isClient) {
 
         var marker = new google.maps.Marker({
             position: newLatLng, 
-            map: map, 
-            draggable:false,
+            map: jsMap,
+            draggable: false,
             animation: google.maps.Animation.DROP,
             icon: {
               url: "/tick-mark-blue.png",
@@ -53,6 +68,7 @@ if (Meteor.isClient) {
 
          google.maps.event.addListener(marker, 'click', function(){
           Session.set("mapID", elem._id)
+
 
        var self = this 
             resize = function(){
