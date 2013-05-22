@@ -17,16 +17,13 @@ if (Meteor.isClient) {
     }
   });
 
-
+  var myMarkers = []
 
   Template.myMap.rendered = function(){
     $(document).ready(function(){
 
 
-
-
               //Set marker from db
-
 
       
       var pos = Locations.find({}).fetch();
@@ -42,18 +39,25 @@ if (Meteor.isClient) {
             draggable:false,
             animation: google.maps.Animation.DROP,
             icon: {
-              url: "http://carmodymoran.ie/wp-content/uploads/2012/01/tick-mark-blue.png",
+              url: "/tick-mark-blue.png",
               scaledSize: {width: 30 + elem.holes, height:30 + elem.holes, widthUnit: "px", heightUnit: "px"}
-            }
+            },
+            id: i 
         });
+
+        
 
          google.maps.event.addListener(marker, 'click', function(){
           Session.set("mapID", elem._id)
-          marker.setIcon({
-            url: "http://carmodymoran.ie/wp-content/uploads/2012/01/tick-mark-blue.png",
-              scaledSize: {width: 30, height:30, widthUnit: "px", heightUnit: "px"}
+
+          gleek = function(){
+            console.log("I'm gay")
+          }()
+          
+
+
           })
-        })
+          myMarkers.push(marker)
 
 })
 
@@ -122,6 +126,13 @@ if (Meteor.isClient) {
       console.log("Clicked'")
       Locations.update(Session.get("mapID"), {$inc: {holes: 1}})
       //call a function which increases icon size
+      console.log(myMarkers.length)
+
+      currentMarker = myMarkers[1]
+
+      console.log(currentMarker)
+
+     google.maps.event.trigger(currentMarker, 'click');
     }
   });
 
