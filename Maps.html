@@ -5,9 +5,18 @@
     </script>
   </head>
 <body>
-  <div>{{>actualMap}}</div>
+  {{>navBar}}
+ <div class="container-fluid">
+<div class="span7">
+  {{>actualMap}}
+
 {{>myMap}}
+</div>
+
+<div class="span3">
 {{>render}}
+</div>
+</div>
 </body>
 
 <template name="actualMap">
@@ -16,17 +25,38 @@
 
 <template name="myMap">
   <div>
-    <input id="address" type="textbox" value="Sydney, NSW">
-    <input type="button" value="Encode" id="encodeSubmit">
+    <input id="address" type="textbox" placeholder="Add Entry">
+    <input type="button" class="btn"value="Encode" id="encodeSubmit">
+    <div id="alertArea"></div>
   </div>
 </template>
 
 
 <template name="render">
-  <ul>{{#each foo}}
-    <li>{{holes}}</li>
-    <li>{{_id}}</li>
+  <h1>Details</h1>
+  <table class="table table-striped">
+  {{#each foo}}
+    <tr><td>Votes: {{holes}}</td></tr>
+    <tr><td>Database ID: {{_id}}</td></tr>
+    <tr><td>Boolean: {{free}}</td></tr>
     </li>{{/each}}
-  </ul>
+  </table>
+
+<h4>
+
 <button class="btn btn-small" type="button" id="augment"><i class="icon-thumbs-up"></i>Upvote</button>
   </template>
+
+  <template name="navBar">
+<div class="navbar">
+  <div class="navbar-inner">
+
+    <a class="brand" href="#"><ul class=".pull-right">Finder Mapper</ul></a>
+    <ul class="nav">
+      <li class="active"><a href="#">Home</a></li>
+      <li><a href="#">Link</a></li>
+      <li><a href="#">Link</a></li>
+    </ul>
+  </div>
+</div>
+</template>

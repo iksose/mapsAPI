@@ -4,14 +4,17 @@ Locations = new Meteor.Collection("locations")
 if (Meteor.isClient) {
 
 var jsMap
+var pos = Locations.find({}).fetch()
 
 Template.actualMap.rendered = function(){
 
 
 var myOptions = {
-    zoom: 7,
-    center: new google.maps.LatLng(46.87916, -3.32910),
-    mapTypeId: 'roadmap'
+    zoom: 4,
+    minZoom: 4,
+    center: new google.maps.LatLng(39.0997265 , -94.57856670000001 ),
+    mapTypeId: 'roadmap',
+    disableDefaultUI: true
 };
 jsMap = new google.maps.Map($('#map')[0], myOptions);
 console.log(typeof jsMap)
@@ -33,8 +36,32 @@ return jsMap
   });
 
   var myMarkers = []
+  var height = function(){
+    return 40+40
+  }
+  var width = function(width){
+    width = width+=20
+    return width
+  }
+  var mapURL = function(){
+    if (mapholes < 10)
+      return "/red.png"
+    return "/tick-mark-blue.png"
+  }
   var mapIcon={
     url: "/tick-mark-blue.png",
+    scaledSize: {
+      width: width(30),
+      height: height(),
+      widthUnit: "px",
+      heightUnit: "px"}
+  }
+
+
+
+
+  var mapIcon2={
+        url: "/tick-mark-blue.png",
     scaledSize: {width: 30, height:30, widthUnit: "px", heightUnit: "px"}
   }
 
@@ -44,8 +71,13 @@ return jsMap
 
               //Set marker from db
 
-      
+      var geocoder = new google.maps.Geocoder()
       var pos = Locations.find({}).fetch();
+      var iconObj = function(){
+        if(elem.holes > 20)
+          return "/red.png"
+        return "/tick-mark-blue.png"
+      }
 
       $.each(pos, function (i, elem) {
       
@@ -58,27 +90,37 @@ return jsMap
             draggable: false,
             animation: google.maps.Animation.DROP,
             icon: {
-              url: "/tick-mark-blue.png",
+              url:       function(){
+        if(elem.holes > 20)
+          return "/red.png"
+        return "/tick-mark-blue.png"
+      }(),
               scaledSize: {width: 30 + elem.holes, height:30 + elem.holes, widthUnit: "px", heightUnit: "px"}
             },
             id: i 
         });
 
-        
+        console.log(elem.holes)
 
          google.maps.event.addListener(marker, 'click', function(){
           Session.set("mapID", elem._id)
 
 
-       var self = this 
-            resize = function(){
-              self.setIcon(mapIcon)
-          }
+
           
           console.log("Listener")
 
 
           })
+         google.maps.event.addListener(marker, 'dblclick', function(){
+          console.log("DOUBLE CLICK")
+                 var self = this 
+            resize = function(){
+              self.setIcon(mapIcon)
+              console.log("SECRET DOUBLE CLICK FUNCTION")
+          }
+         })
+
           myMarkers.push(marker)
 
 })
@@ -91,7 +133,7 @@ return jsMap
 
                   geocoder.geocode( { 'address': address}, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
-        map.setCenter(results[0].geometry.location);
+        jsMap.setCenter(results[0].geometry.location);
         var pointzzz = results[0].geometry.location
         console.log("Important LatLng " + pointzzz)
         console.log(results[0].geometry.location.jb)
@@ -114,7 +156,7 @@ return jsMap
 
         var marker = new google.maps.Marker({
             position: pointzzz, 
-            map: map, 
+            map: jsMap, 
             draggable:false,
             animation: google.maps.Animation.DROP
         });
@@ -122,8 +164,13 @@ return jsMap
 
       }//end if
       else{
-        console.log("Already exists")
-      }
+        (function(){
+          console.log("Already exists")
+          $("#alertArea").append("<div class='alert alert-error'>Already Exists</div>")
+            setTimeout(function(){
+              $('#alertArea').empty()},1000)
+          })()
+        }
       }
       })
 
@@ -150,10 +197,10 @@ return jsMap
       //call a function which increases icon size
       
 
-      currentMarker = myMarkers[1]
+      currentMarker = myMarkers[2]
 
       
-     google.maps.event.trigger(currentMarker, 'click', resize());
+     google.maps.event.trigger(currentMarker, 'dblclick', resize());
     }
   });
 
